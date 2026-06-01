@@ -1,7 +1,9 @@
 import logging
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
+from pandas.errors import EmptyDataError, ParserError
 from sqlalchemy.orm import Session
 
 from app.models.department import Department
@@ -38,6 +40,16 @@ def _clean_row(row: pd.Series) -> dict[str, object]:
         elif key == "id" or key.endswith("_id"):
             try:
                 cleaned[key] = int(value)
+            except (ValueError, TypeError):
+                cleaned[key] = value
+        elif key == "hire_datetime":
+            try:
+                if isinstance(value, str):
+                    cleaned[key] = datetime.fromisoformat(
+                        value.replace("Z", "+00:00")
+                    )
+                else:
+                    cleaned[key] = value
             except (ValueError, TypeError):
                 cleaned[key] = value
         else:
@@ -83,17 +95,24 @@ def load_csv_to_db(
     if not path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
 
-    df = pd.read_csv(file_path, header=None)
+    try:
+        df = pd.read_csv(file_path, header=None)
+    except EmptyDataError:
+        logger.warning(f"Empty CSV file: {file_path}")
+        return 0, 0, ["Empty CSV file: no data to parse"]
+    except ParserError as e:
+        logger.error(f"Failed to parse CSV: {e}")
+        return 0, 0, [f"Failed to parse CSV: {e}"]
 
-    if table_name == "departments":
+    if table_name in ("departments",):
         df.columns = ["id", "department"]
         model = Department
         validator = validate_department_row
-    elif table_name == "jobs":
+    elif table_name in ("jobs",):
         df.columns = ["id", "job"]
         model = Job
         validator = validate_job_row
-    elif table_name == "hired_employees":
+    elif table_name in ("hired_employees", "employees"):
         df.columns = ["id", "name", "hire_datetime", "department_id", "job_id"]
         model = Employee
         validator = validate_employee_row

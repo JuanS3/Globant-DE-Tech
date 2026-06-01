@@ -188,6 +188,22 @@ class TestMigration:
         assert data["inserted"] == 2
         assert data["failed"] == 0
 
+    def test_migration_empty_csv(self, client: TestClient) -> None:
+        """
+        Verify CSV migration endpoint handles empty files gracefully.
+
+        """
+        file = BytesIO(b"")
+        response = client.post(
+            "/api/v1/migration/departments",
+            files={"file": ("empty.csv", file, "text/csv")},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["inserted"] == 0
+        assert data["failed"] == 0
+        assert "Empty CSV file" in data["errors"][0]
+
 
 class TestBackupRestore:
     """Test backup and restore endpoints."""
