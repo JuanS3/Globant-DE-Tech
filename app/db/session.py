@@ -5,11 +5,52 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import get_settings
 
-settings = get_settings()
+_engine = None
+_SessionLocal = None
 
-engine = create_engine(settings.database_url, echo=settings.debug)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def _get_engine():
+    """
+    Return the SQLAlchemy engine, creating it on first call.
+
+    Returns
+    -------
+    Engine
+        The SQLAlchemy engine instance.
+
+    """
+    global _engine
+    if _engine is None:
+        settings = get_settings()
+        connect_args = (
+            {"check_same_thread": False}
+            if settings.db_driver == "sqlite"
+            else {}
+        )
+        _engine = create_engine(
+            settings.database_url,
+            connect_args=connect_args,
+            echo=settings.debug,
+        )
+    return _engine
+
+
+def _get_session_local():
+    """
+    Return the session maker, creating it on first call.
+
+    Returns
+    -------
+    sessionmaker
+        The SQLAlchemy session maker.
+
+    """
+    global _SessionLocal
+    if _SessionLocal is None:
+        _SessionLocal = sessionmaker(
+            autocommit=False, autoflush=False, bind=_get_engine()
+        )
+    return _SessionLocal
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -22,7 +63,7 @@ def get_db() -> Generator[Session, None, None]:
         A SQLAlchemy database session.
 
     """
-    db = SessionLocal()
+    db = _get_session_local()()
     try:
         yield db
     finally:

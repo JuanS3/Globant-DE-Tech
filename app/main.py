@@ -11,7 +11,7 @@ from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.security import limiter
 from app.db.base import Base
-from app.db.session import engine
+from app.db.session import _get_engine
 
 settings = get_settings()
 
@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
         The FastAPI application instance.
 
     """
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=_get_engine())
     yield
 
 
