@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# SQLite database & generated backups
+data/*.db
+backups/*.avro
+
+# Environment
+.env

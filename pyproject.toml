@@ -1,7 +1,26 @@
 [project]
 name = "Globant-DE-Tech"
 version = "0.1.0"
-description = "Globant's Data Engineering Technincal Test"
+description = "Globant's Data Engineering Technical Test"
 readme = "README.md"
-requires-python = ">=3.14"
-dependencies = []
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.0",
+    "sqlalchemy>=2.0.30",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.0",
+    "slowapi>=0.1.9",
+    "pandas>=2.2.0",
+    "fastavro>=1.9.0",
+    "python-multipart>=0.0.9",
+    "aiosqlite>=0.20.0",
+    "asyncpg>=0.29.0",
+    "psycopg2-binary>=2.9.9",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2.0",
+    "httpx>=0.27.0",
+]
