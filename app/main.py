@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from slowapi import _rate_limit_exceeded_handler
+from starlette.responses import RedirectResponse
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
@@ -46,6 +47,20 @@ app.add_middleware(SlowAPIMiddleware)
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.include_router(api_router, prefix="/api/v1")
+
+
+@app.get("/")
+def index() -> RedirectResponse:
+    """
+    Redirect to the API documentation.
+
+    Returns
+    -------
+    RedirectResponse
+        A redirect response to the Swagger UI documentation.
+
+    """
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health")
