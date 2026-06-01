@@ -4,6 +4,30 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """
+    Define application settings loaded from environment variables.
+
+    Attributes
+    ----------
+    app_name : str
+        Name of the application.
+    app_version : str
+        Current version of the application.
+    debug : bool
+        Enable debug mode.
+    db_host : str
+        Database host address.
+    db_port : int
+        Database port number.
+    db_user : str
+        Database username.
+    db_password : str
+        Database password.
+    db_name : str
+        Database name.
+
+    """
+
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
@@ -35,4 +59,13 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
+    """
+    Return cached application settings instance.
+
+    Returns
+    -------
+    Settings
+        The application settings loaded from environment variables.
+
+    """
     return Settings()

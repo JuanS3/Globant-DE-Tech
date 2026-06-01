@@ -1,16 +1,16 @@
 import logging
-from typing import Any, Dict, Tuple
+from typing import Tuple
 
 logger = logging.getLogger(__name__)
 
 
-def validate_department_row(row: Dict[str, Any]) -> Tuple[bool, str]:
+def validate_department_row(row: dict[str, object]) -> tuple[bool, str]:
     """
     Validate a department row against data rules.
 
     Parameters
     ----------
-    row : dict[str, Any]
+    row : dict[str, object]
         Dictionary containing department data.
 
     Returns
@@ -29,13 +29,13 @@ def validate_department_row(row: Dict[str, Any]) -> Tuple[bool, str]:
     return True, ""
 
 
-def validate_job_row(row: Dict[str, Any]) -> Tuple[bool, str]:
+def validate_job_row(row: dict[str, object]) -> tuple[bool, str]:
     """
     Validate a job row against data rules.
 
     Parameters
     ----------
-    row : dict[str, Any]
+    row : dict[str, object]
         Dictionary containing job data.
 
     Returns
@@ -54,13 +54,13 @@ def validate_job_row(row: Dict[str, Any]) -> Tuple[bool, str]:
     return True, ""
 
 
-def validate_employee_row(row: Dict[str, Any]) -> Tuple[bool, str]:
+def validate_employee_row(row: dict[str, object]) -> tuple[bool, str]:
     """
     Validate an employee row against data rules.
 
     Parameters
     ----------
-    row : dict[str, Any]
+    row : dict[str, object]
         Dictionary containing employee data.
 
     Returns

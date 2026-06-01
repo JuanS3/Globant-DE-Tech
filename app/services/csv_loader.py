@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
 
 import pandas as pd
 from sqlalchemy.orm import Session
@@ -17,7 +16,7 @@ from app.utils.validators import (
 logger = logging.getLogger(__name__)
 
 
-def _clean_row(row: pd.Series) -> Dict[str, Any]:
+def _clean_row(row: pd.Series) -> dict[str, object]:
     """
     Clean and normalize a pandas Series row for validation.
 
@@ -28,11 +27,11 @@ def _clean_row(row: pd.Series) -> Dict[str, Any]:
 
     Returns
     -------
-    dict[str, Any]
+    dict[str, object]
         A dictionary with cleaned values and proper types.
 
     """
-    cleaned = {}
+    cleaned: dict[str, object] = {}
     for key, value in row.items():
         if pd.isna(value):
             cleaned[key] = None
@@ -48,7 +47,7 @@ def _clean_row(row: pd.Series) -> Dict[str, Any]:
 
 def load_csv_to_db(
     db: Session, file_path: str, table_name: str
-) -> Tuple[int, int, List[str]]:
+) -> tuple[int, int, list[str]]:
     """
     Load data from a CSV file into the specified database table.
 
@@ -103,7 +102,7 @@ def load_csv_to_db(
 
     inserted = 0
     failed = 0
-    errors: List[str] = []
+    errors: list[str] = []
 
     for idx, row in df.iterrows():
         cleaned = _clean_row(row)
